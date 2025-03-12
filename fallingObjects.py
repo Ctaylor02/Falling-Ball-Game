@@ -1,6 +1,7 @@
 
 import pygame
 import random
+import time
 
 pygame.init() #initialize pygame
 
@@ -61,15 +62,36 @@ falling_balls = []
 last_spawn_time = pygame.time.get_ticks()
 spawn_interval = 1000 #1 second in milliseconds
 
-#initializing a font
+#initializing all fonts
 font = pygame.font.Font(None, size=30)
+endGameFont = pygame.font.Font(None, size=50)
+endGameStats = pygame.font.Font(None, size=50)
+endGameScore = pygame.font.Font(None, size=50)
+endGameLives = pygame.font.Font(None, size=50)
 
 #keep track of score and lives
 score, lives = 0, 3
 
 #creating a sound
 drum = pygame.mixer.Sound('drum.wav')
-gameMusic = pygame.mixer.Sound('gameMusic.mp3')
+gameMusic = pygame.mixer.Sound('gameMusic2.mp3')
+
+def end_game():
+    gameOver = endGameFont.render('Game Over! You Ran Out Of Lives!', True, (0, 0, 0))
+    endStats = endGameStats.render("STATS", True, (0, 0, 0))
+    endScore = endGameScore.render(f"Total Score - {score}", True, (0, 0, 0))
+    endLives = endGameLives.render(f"Lives Remaining - {lives}", True, (0, 0, 0))
+    #put game stats on the screen
+    screen.blit(gameOver, (100, 300))
+    screen.blit(endStats, (250, 350))
+    screen.blit(endScore, (200, 390))
+    screen.blit(endLives, (200, 420))
+
+    pygame.display.flip() #render all screen updates
+    pygame.time.delay(10000) #pasue for 10 seconds
+
+    exit() #exit game
+
 
 
 clock = pygame.time.Clock()
@@ -107,9 +129,11 @@ while running:
 
 
     #make the objects fall
+    new_falling_balls = []
     for ball in falling_balls:
         ball["y"] += ball_speed
         screen.blit(ball["Image"], (ball["x"], ball["y"]))
+
         # handle if ball collides with paddle
         target = pygame.Rect(ball["x"], ball["y"], ball["width"], 15)
         collide = hitbox.colliderect(target)
@@ -118,10 +142,19 @@ while running:
             score1 = font.render(f"Score: {score}", True, (0, 0, 0))
             screen.blit(score1, (0, 0))
         #handle for if ball is missed by paddle
-        if 495 < ball["y"] < HEIGHT and not collide:
+        elif ball["y"] >= HEIGHT:
             lives -= 1
             lives1 = font.render(f"Lives: {lives}", True, (0, 0, 0))
             screen.blit(lives1, (0, 20))
+        else:
+            new_falling_balls.append(ball) #keeps balls still balling
+
+    falling_balls = new_falling_balls #update list after checking all balls
+
+    #if lives hits 0, end the game a print game stats
+    if lives == 0:
+        end_game()
+
 
 
 
@@ -159,6 +192,7 @@ while running:
 
     # Keep paddle inside screen bounds
     paddle_x = max(0, min(800 - paddle_image.get_width(), paddle_x))
+
 
     pygame.display.flip()
 
