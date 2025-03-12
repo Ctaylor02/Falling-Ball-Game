@@ -1,7 +1,6 @@
 
 import pygame
 import random
-import time
 
 pygame.init() #initialize pygame
 
@@ -70,17 +69,17 @@ endGameScore = pygame.font.Font(None, size=50)
 endGameLives = pygame.font.Font(None, size=50)
 
 #keep track of score and lives
-score, lives = 0, 3
+score, lives = 0, 5
 
 #creating a sound
 drum = pygame.mixer.Sound('drum.wav')
 gameMusic = pygame.mixer.Sound('gameMusic2.mp3')
 
 def end_game():
-    gameOver = endGameFont.render('Game Over! You Ran Out Of Lives!', True, (0, 0, 0))
-    endStats = endGameStats.render("STATS", True, (0, 0, 0))
-    endScore = endGameScore.render(f"Total Score - {score}", True, (0, 0, 0))
-    endLives = endGameLives.render(f"Lives Remaining - {lives}", True, (0, 0, 0))
+    gameOver = endGameFont.render('Game Over! You Ran Out Of Lives!', True, (255, 0, 0))
+    endStats = endGameStats.render("STATS", True, (255, 0, 0))
+    endScore = endGameScore.render(f"Total Score - {score}", True, (255, 0, 0))
+    endLives = endGameLives.render(f"Lives Remaining - {lives}", True, (255, 0, 0))
     #put game stats on the screen
     screen.blit(gameOver, (100, 300))
     screen.blit(endStats, (250, 350))
@@ -88,7 +87,7 @@ def end_game():
     screen.blit(endLives, (200, 420))
 
     pygame.display.flip() #render all screen updates
-    pygame.time.delay(10000) #pasue for 10 seconds
+    pygame.time.delay(7000) #pasue for 10 seconds
 
     exit() #exit game
 
@@ -99,15 +98,15 @@ running = True
 
 #main loop to keep the window open
 while running:
-    screen.fill((255, 255, 255))
+    screen.fill((0,0,0))
 
     # gameMusic.play()
 
 
-    score1 = font.render(f"Score: {score}", True, (0, 0, 0))
+    score1 = font.render(f"Score: {score}", True, (255,255,255))
     screen.blit(score1, (0,0))
 
-    lives1 = font.render(f"Lives: {lives}", True, (0, 0, 0))
+    lives1 = font.render(f"Lives: {lives}", True, (255,255,255))
     screen.blit(lives1, (0,20))
 
     #paddle hitbox
@@ -139,12 +138,12 @@ while running:
         collide = hitbox.colliderect(target)
         if collide:
             score += 1
-            score1 = font.render(f"Score: {score}", True, (0, 0, 0))
+            score1 = font.render(f"Score: {score}", True, (255,255,255))
             screen.blit(score1, (0, 0))
         #handle for if ball is missed by paddle
         elif ball["y"] >= HEIGHT:
             lives -= 1
-            lives1 = font.render(f"Lives: {lives}", True, (0, 0, 0))
+            lives1 = font.render(f"Lives: {lives}", True, (255,255,255))
             screen.blit(lives1, (0, 20))
         else:
             new_falling_balls.append(ball) #keeps balls still balling
@@ -153,11 +152,8 @@ while running:
 
     #if lives hits 0, end the game a print game stats
     if lives == 0:
+        pygame.time.delay(1000)
         end_game()
-
-
-
-
 
     #remove balls that reach the bottom of screen
     falling_balls = [ball for ball in falling_balls if ball["y"] < HEIGHT]
